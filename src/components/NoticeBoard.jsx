@@ -69,31 +69,37 @@ export default function NoticeBoard({ session }) {
       {session && <NoticeForm session={session} />}
 
       <section className="board-section">
-        <div className="board-head">
-          <h2 className="board-title">
-            Notices <span className="count">({visible.length})</span>
-          </h2>
-          <div className="filters" role="tablist" aria-label="Filter by category">
-            <button
-              role="tab"
-              aria-selected={filter === ALL}
-              className={`pill ${filter === ALL ? 'pill-active' : ''}`}
-              onClick={() => setFilter(ALL)}
-            >
-              All
-            </button>
-            {CATEGORIES.map((c) => (
-              <button
-                key={c}
-                role="tab"
-                aria-selected={filter === c}
-                className={`pill ${filter === c ? 'pill-active' : ''}`}
-                onClick={() => setFilter(c)}
-              >
-                {c}
-              </button>
-            ))}
+        <div className="section-banner">
+          <div className="section-banner-left">
+            <span className="banner-eyebrow">Bulletin</span>
+            <h2 className="section-title">Posted Notices</h2>
           </div>
+          <span className="section-count">
+            {visible.length} {visible.length === 1 ? 'notice' : 'notices'} on the board
+          </span>
+        </div>
+
+        <div className="filters" role="tablist" aria-label="Filter by category">
+          <span className="filter-label">Filter</span>
+          <button
+            role="tab"
+            aria-selected={filter === ALL}
+            className={`pill ${filter === ALL ? 'pill-active' : ''}`}
+            onClick={() => setFilter(ALL)}
+          >
+            All
+          </button>
+          {CATEGORIES.map((c) => (
+            <button
+              key={c}
+              role="tab"
+              aria-selected={filter === c}
+              className={`pill ${filter === c ? 'pill-active' : ''}`}
+              onClick={() => setFilter(c)}
+            >
+              {c}
+            </button>
+          ))}
         </div>
 
         {err && <div className="alert alert-err">{err}</div>}

@@ -31,13 +31,14 @@ export default function Auth() {
   return (
     <div className="auth-wrap">
       <div className="auth-card">
+        <span className="banner-eyebrow">Authorised Personnel</span>
         <h2 className="auth-title">
-          {mode === 'signin' ? 'Sign in' : 'Create an account'}
+          {mode === 'signin' ? 'Member Sign In' : 'Register for Posting'}
         </h2>
         <p className="auth-sub">
           {mode === 'signin'
-            ? 'Sign in to post a notice on the board.'
-            : 'Register with your email to start posting.'}
+            ? 'Sign in with your university email to pin notices to the board.'
+            : 'Create an account to start posting notices for the BSE-6 community.'}
         </p>
 
         <form onSubmit={handleSubmit} className="auth-form">

@@ -31,7 +31,10 @@ export default function NoticeForm({ session }) {
 
   return (
     <form className="notice-form" onSubmit={handleSubmit}>
-      <h3 className="form-title">Post a notice</h3>
+      <div className="form-header">
+        <span className="banner-eyebrow">New Submission</span>
+        <h3 className="form-title">Pin a Notice to the Board</h3>
+      </div>
 
       <div className="form-row">
         <label className="field">

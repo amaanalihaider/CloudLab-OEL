@@ -1,19 +1,20 @@
 import { useState } from 'react';
 import { supabase } from '../supabaseClient.js';
 
-function formatTime(iso) {
-  const d = new Date(iso);
-  const now = new Date();
-  const diff = (now - d) / 1000;
-  if (diff < 60) return 'just now';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-  return d.toLocaleDateString(undefined, {
-    day: 'numeric',
+function formatDate(iso) {
+  return new Date(iso).toLocaleString('en-GB', {
+    day: '2-digit',
     month: 'short',
     year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
   });
+}
+
+function shortId(uuid) {
+  if (!uuid) return '—';
+  return uuid.slice(0, 8).toUpperCase();
 }
 
 export default function NoticeCard({ notice, session }) {
@@ -21,39 +22,46 @@ export default function NoticeCard({ notice, session }) {
   const isAuthor = session && session.user && session.user.id === notice.user_id;
 
   const handleDelete = async () => {
-    if (!confirm('Delete this notice?')) return;
+    if (!confirm('Remove this notice from the board?')) return;
     setBusy(true);
     const { error } = await supabase.from('notices').delete().eq('id', notice.id);
     setBusy(false);
     if (error) alert(`Delete failed: ${error.message}`);
-    // Optimistic UI is handled by the realtime DELETE event in NoticeBoard.
+    // Realtime DELETE event in NoticeBoard removes it from the UI.
   };
 
-  const catClass = `chip chip-${notice.category.toLowerCase()}`;
+  const catClass = `stamp stamp-${notice.category.toLowerCase()}`;
 
   return (
     <article className="notice-card">
+      <div className="pin" aria-hidden="true" />
+
       <header className="notice-head">
         <span className={catClass}>{notice.category}</span>
-        <time className="notice-time" dateTime={notice.created_at}>
-          {formatTime(notice.created_at)}
-        </time>
+        <span className="notice-ref">REF #{String(notice.id).padStart(4, '0')}</span>
       </header>
 
       <h3 className="notice-title">{notice.title}</h3>
       <p className="notice-body">{notice.body}</p>
 
-      {isAuthor && (
-        <footer className="notice-foot">
+      <footer className="notice-foot">
+        <div className="notice-meta">
+          <span className="meta-label">Posted</span>
+          <span className="meta-value">{formatDate(notice.created_at)}</span>
+          <span className="meta-sep">·</span>
+          <span className="meta-label">By</span>
+          <span className="meta-value mono">USR-{shortId(notice.user_id)}</span>
+        </div>
+        {isAuthor && (
           <button
             className="btn btn-danger btn-sm"
             onClick={handleDelete}
             disabled={busy}
           >
-            {busy ? 'Deleting...' : 'Delete'}
+            {busy ? 'Removing…' : 'Remove'}
           </button>
-        </footer>
-      )}
+        )}
+      </footer>
     </article>
   );
 }
